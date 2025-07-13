@@ -39,7 +39,7 @@ export interface Post {
   content: string;
   slug: string;
   category: string;
-  tags: string[];
+  tags: string;
   featured_image?: string;
   featured_post: boolean;
   read_time: number;

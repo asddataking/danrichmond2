@@ -72,7 +72,7 @@ export const useBlog = () => {
     excerpt: string;
     content: string;
     category: string;
-    tags: string[];
+    tags: string;
     featured_image?: File;
     featured_post?: boolean;
     published?: boolean;

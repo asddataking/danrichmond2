@@ -9,7 +9,7 @@ export const blogService = {
         filter: 'published = true',
         sort: '-created',
       });
-      return records.items as Post[];
+      return records.items as unknown as Post[];
     } catch (error) {
       console.error('Error fetching posts:', error);
       return [];
@@ -20,7 +20,7 @@ export const blogService = {
   async getPostBySlug(slug: string): Promise<Post | null> {
     try {
       const record = await pb.collection(COLLECTIONS.POSTS).getFirstListItem(`slug = "${slug}" && published = true`);
-      return record as Post;
+      return record as unknown as Post;
     } catch (error) {
       console.error('Error fetching post:', error);
       return null;
@@ -34,7 +34,7 @@ export const blogService = {
         filter: 'featured_post = true && published = true',
         sort: '-created',
       });
-      return records.items as Post[];
+      return records.items as unknown as Post[];
     } catch (error) {
       console.error('Error fetching featured posts:', error);
       return [];
@@ -48,7 +48,7 @@ export const blogService = {
         filter: `category = "${category}" && published = true`,
         sort: '-created',
       });
-      return records.items as Post[];
+      return records.items as unknown as Post[];
     } catch (error) {
       console.error('Error fetching posts by category:', error);
       return [];
@@ -56,7 +56,7 @@ export const blogService = {
   },
 
   // Create a new post
-  async createPost(postData: Omit<Post, 'id' | 'created' | 'updated'> & { featured_image?: File }): Promise<Post | null> {
+  async createPost(postData: Omit<Post, 'id' | 'created' | 'updated' | 'featured_image'> & { featured_image?: File }): Promise<Post | null> {
     try {
       // Prepare form data for file upload
       const formData = new FormData();
@@ -67,7 +67,7 @@ export const blogService = {
       formData.append('content', postData.content);
       formData.append('slug', postData.slug);
       formData.append('category', postData.category);
-      formData.append('tags', postData.tags.join(','));
+      formData.append('tags', postData.tags);
       formData.append('featured_post', postData.featured_post.toString());
       formData.append('read_time', postData.read_time.toString());
       formData.append('published', postData.published.toString());
@@ -78,7 +78,7 @@ export const blogService = {
       }
       
       const record = await pb.collection(COLLECTIONS.POSTS).create(formData);
-      return record as Post;
+      return record as unknown as Post;
     } catch (error) {
       console.error('Error creating post:', error);
       return null;
@@ -89,7 +89,7 @@ export const blogService = {
   async updatePost(id: string, postData: Partial<Post>): Promise<Post | null> {
     try {
       const record = await pb.collection(COLLECTIONS.POSTS).update(id, postData);
-      return record as Post;
+      return record as unknown as Post;
     } catch (error) {
       console.error('Error updating post:', error);
       return null;
@@ -116,7 +116,7 @@ export const categoryService = {
       const records = await pb.collection(COLLECTIONS.CATEGORIES).getList(1, 50, {
         sort: 'name',
       });
-      return records.items as Category[];
+      return records.items as unknown as Category[];
     } catch (error) {
       console.error('Error fetching categories:', error);
       return [];
@@ -127,7 +127,7 @@ export const categoryService = {
   async getCategoryBySlug(slug: string): Promise<Category | null> {
     try {
       const record = await pb.collection(COLLECTIONS.CATEGORIES).getFirstListItem(`slug = "${slug}"`);
-      return record as Category;
+      return record as unknown as Category;
     } catch (error) {
       console.error('Error fetching category:', error);
       return null;
@@ -143,7 +143,7 @@ export const tagService = {
       const records = await pb.collection(COLLECTIONS.TAGS).getList(1, 100, {
         sort: 'name',
       });
-      return records.items as Tag[];
+      return records.items as unknown as Tag[];
     } catch (error) {
       console.error('Error fetching tags:', error);
       return [];
@@ -154,7 +154,7 @@ export const tagService = {
   async getTagBySlug(slug: string): Promise<Tag | null> {
     try {
       const record = await pb.collection(COLLECTIONS.TAGS).getFirstListItem(`slug = "${slug}"`);
-      return record as Tag;
+      return record as unknown as Tag;
     } catch (error) {
       console.error('Error fetching tag:', error);
       return null;

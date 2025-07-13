@@ -76,13 +76,13 @@ const BlogPost: React.FC<BlogPostProps> = ({ post, onBack }) => {
 
             {/* Tags */}
             <div className="flex flex-wrap gap-2">
-              {post.tags && post.tags.map((tag) => (
+              {post.tags && post.tags.split(',').map((tag) => (
                 <span
                   key={tag}
                   className="px-3 py-1 bg-dark-700 text-gray-300 text-sm rounded-full flex items-center gap-2"
                 >
                   <FiTag className="w-3 h-3" />
-                  {tag}
+                  {tag.trim()}
                 </span>
               ))}
             </div>
