@@ -26,7 +26,8 @@ const AdminDashboard: React.FC = () => {
   };
 
   const handleEditPost = (post: Post) => {
-    setEditingPost(post);
+    // For now, just open the submission form
+    // TODO: Implement edit functionality
     setShowBlogSubmission(true);
   };
 
@@ -268,7 +269,6 @@ const AdminDashboard: React.FC = () => {
           onSubmit={handleCreatePost}
           onCancel={() => {
             setShowBlogSubmission(false);
-            setEditingPost(null);
           }}
         />
       )}

@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FiYoutube, FiPlay } from 'react-icons/fi';
+import { FiYoutube } from 'react-icons/fi';
 import YouTubeIntegration from './YouTubeIntegration';
 
 const VideoHub: React.FC = () => {

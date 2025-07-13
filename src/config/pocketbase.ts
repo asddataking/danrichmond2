@@ -9,7 +9,8 @@ export const authenticateAdmin = async (email: string, password: string) => {
     const authData = await pb.admins.authWithPassword(email, password);
     return authData;
   } catch (error) {
-    throw new Error(`Authentication failed: ${error.message}`);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    throw new Error(`Authentication failed: ${errorMessage}`);
   }
 };
 

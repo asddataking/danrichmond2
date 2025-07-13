@@ -47,7 +47,7 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
       setError(null);
       setIsLoading(true);
       
-      const authData = await pb.admins.authWithPassword(email, password);
+      await pb.admins.authWithPassword(email, password);
       setIsAuthenticated(true);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Authentication failed';

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FiPlus, FiX, FiUpload, FiSave, FiEye } from 'react-icons/fi';
+import { FiPlus, FiX, FiSave, FiEye } from 'react-icons/fi';
 
 interface BlogSubmissionProps {
   onSubmit: (post: BlogPostData) => void;
