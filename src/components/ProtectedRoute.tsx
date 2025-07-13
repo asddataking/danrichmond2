@@ -1,13 +1,15 @@
 import React from 'react';
+import { FiX } from 'react-icons/fi';
 import { useAdminAuth } from '../contexts/AdminAuthContext';
 import AdminLogin from './AdminLogin';
 import AdminDashboard from './AdminDashboard';
 
 interface ProtectedRouteProps {
   children?: React.ReactNode;
+  onClose?: () => void;
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, onClose }) => {
   const { isAuthenticated, isLoading } = useAdminAuth();
 
   // Show loading state while checking authentication
@@ -25,14 +27,26 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   // If not authenticated, show login form
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-dark-900">
+      <div className="min-h-screen bg-dark-900 relative">
+        {onClose && (
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 z-10 p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors duration-200"
+          >
+            <FiX className="w-5 h-5" />
+          </button>
+        )}
         <AdminLogin
           onLoginSuccess={() => {
             // Authentication successful, component will re-render
           }}
           onCancel={() => {
             // Handle cancel - could redirect to home page
-            window.location.href = '/';
+            if (onClose) {
+              onClose();
+            } else {
+              window.location.href = '/';
+            }
           }}
         />
       </div>
@@ -40,7 +54,19 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   }
 
   // If authenticated, show the admin dashboard or children
-  return <>{children || <AdminDashboard />}</>;
+  return (
+    <div className="relative">
+      {onClose && (
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 z-10 p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors duration-200"
+        >
+          <FiX className="w-5 h-5" />
+        </button>
+      )}
+      {children || <AdminDashboard />}
+    </div>
+  );
 };
 
 export default ProtectedRoute; 
