@@ -81,12 +81,14 @@ export const useBlog = () => {
       const slug = blogUtils.generateSlug(postData.title);
       const readTime = blogUtils.calculateReadTime(postData.content);
 
+      const { featured_image, ...rest } = postData;
       const newPost = await blogService.createPost({
-        ...postData,
+        ...rest,
         slug,
         read_time: readTime,
         featured_post: postData.featured_post || false,
         published: postData.published !== false, // Default to true
+        featured_image, // Pass the File separately for upload
       });
 
       if (newPost) {
