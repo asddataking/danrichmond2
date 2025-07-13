@@ -1,27 +1,29 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FiCalendar, FiClock, FiArrowRight } from 'react-icons/fi';
+import { FiCalendar, FiClock, FiArrowRight, FiPlus, FiLoader } from 'react-icons/fi';
 import BlogPost from './BlogPost';
+import BlogSubmission from './BlogSubmission';
+import { useBlog } from '../hooks/useBlog';
+import { Post } from '../config/pocketbase';
 
 const Blog: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [selectedPost, setSelectedPost] = useState<any>(null);
+  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+  const [showSubmission, setShowSubmission] = useState(false);
+  
+  const { 
+    posts, 
+    categories, 
+    loading, 
+    error, 
+    createPost, 
+    getPostImageUrl 
+  } = useBlog();
 
   const handlePostClick = (slug: string) => {
-    const post = blogPosts.find(p => p.slug === slug);
+    const post = posts.find(p => p.slug === slug);
     if (post) {
-      // Add sample content for the blog post
-      const fullPost = {
-        ...post,
-        content: `This is a detailed blog post about ${post.title}. 
-
-The content would go here with multiple paragraphs exploring the topic in depth. This is where you'd put the full article content with proper formatting, examples, and insights.
-
-In a real implementation, this content would be stored in a database or CMS and would include rich formatting, images, and other media elements.
-
-The blog post would continue with more paragraphs, examples, and detailed analysis of the topic at hand.`
-      };
-      setSelectedPost(fullPost);
+      setSelectedPost(post);
     }
   };
 
@@ -29,96 +31,67 @@ The blog post would continue with more paragraphs, examples, and detailed analys
     setSelectedPost(null);
   };
 
-  const categories = [
-    { id: 'all', name: 'All Posts' },
-    { id: 'ai', name: 'AI & Tech' },
-    { id: 'ufo', name: 'UFOs & Conspiracy' },
-    { id: 'simulation', name: 'Simulation Theory' },
-    { id: 'culture', name: 'Digital Culture' }
-  ];
-
-  const blogPosts = [
-    {
-      id: 1,
-      title: "The AI Revolution: Why We're All Becoming Cyborgs",
-      excerpt: "Exploring how AI is reshaping our relationship with technology and what it means for the future of human consciousness.",
-      category: 'ai',
-      date: '2024-01-15',
-      readTime: '5 min read',
-      tags: ['AI', 'Technology', 'Future'],
-      featured: true,
-      image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=400&fit=crop",
-      slug: "ai-revolution-cyborgs"
-    },
-    {
-      id: 2,
-      title: "UFO Disclosure: What They're Not Telling Us",
-      excerpt: "A deep dive into the latest developments in UFO disclosure and why the truth might be stranger than fiction.",
-      category: 'ufo',
-      date: '2024-01-10',
-      readTime: '8 min read',
-      tags: ['UFOs', 'Disclosure', 'Conspiracy'],
-      featured: false,
-      image: "https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=800&h=400&fit=crop",
-      slug: "ufo-disclosure-truth"
-    },
-    {
-      id: 3,
-      title: "Living in a Simulation: Evidence That's Hard to Ignore",
-      excerpt: "From quantum physics to glitches in reality, examining the evidence that suggests we might be living in a computer simulation.",
-      category: 'simulation',
-      date: '2024-01-05',
-      readTime: '12 min read',
-      tags: ['Simulation Theory', 'Philosophy', 'Reality'],
-      featured: false,
-      image: "https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=800&h=400&fit=crop",
-      slug: "simulation-theory-evidence"
-    },
-    {
-      id: 4,
-      title: "The Death of Authenticity in the Age of Social Media",
-      excerpt: "How social media is changing what it means to be authentic and why we're all performing for invisible audiences.",
-      category: 'culture',
-      date: '2023-12-28',
-      readTime: '6 min read',
-      tags: ['Social Media', 'Authenticity', 'Culture'],
-      featured: false,
-      image: "https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=800&h=400&fit=crop",
-      slug: "death-authenticity-social-media"
-    },
-    {
-      id: 5,
-      title: "ChatGPT and the Future of Creative Work",
-      excerpt: "How AI is transforming creative industries and what it means for artists, writers, and content creators.",
-      category: 'ai',
-      date: '2023-12-20',
-      readTime: '7 min read',
-      tags: ['AI', 'Creativity', 'Content Creation'],
-      featured: false,
-      image: "https://images.unsplash.com/photo-1676299258276-5b1d7c4b0c0c?w=800&h=400&fit=crop",
-      slug: "chatgpt-future-creative-work"
-    },
-    {
-      id: 6,
-      title: "Digital Nomadism: The New American Dream?",
-      excerpt: "Why more people are choosing location independence and what it means for the future of work and society.",
-      category: 'culture',
-      date: '2023-12-15',
-      readTime: '9 min read',
-      tags: ['Digital Nomad', 'Work', 'Lifestyle'],
-      featured: false,
-      image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=400&fit=crop",
-      slug: "digital-nomadism-american-dream"
+  const handleSubmitPost = async (newPost: any) => {
+    const createdPost = await createPost(newPost);
+    if (createdPost) {
+      setShowSubmission(false);
     }
+  };
+
+  // Create category options including "All Posts"
+  const categoryOptions = [
+    { id: 'all', name: 'All Posts' },
+    ...categories.map(cat => ({ id: cat.name, name: cat.name }))
   ];
 
+  // Filter posts based on selected category
   const filteredPosts = selectedCategory === 'all' 
-    ? blogPosts 
-    : blogPosts.filter(post => post.category === selectedCategory);
+    ? posts 
+    : posts.filter(post => post.category === selectedCategory);
+
+  // Loading state
+  if (loading) {
+    return (
+      <section id="blog" className="py-20 bg-dark-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-center h-64">
+            <div className="flex items-center gap-3 text-white">
+              <FiLoader className="w-6 h-6 animate-spin" />
+              <span>Loading blog posts...</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <section id="blog" className="py-20 bg-dark-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <div className="text-red-400 mb-4">Error loading blog posts</div>
+            <button 
+              onClick={() => window.location.reload()} 
+              className="px-6 py-3 bg-primary-500 hover:bg-primary-600 text-white font-semibold rounded-lg transition-all duration-200"
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   // If a post is selected, show the blog post detail view
   if (selectedPost) {
     return <BlogPost post={selectedPost} onBack={handleBackToBlog} />;
+  }
+
+  // If submission form is open, show it
+  if (showSubmission) {
+    return <BlogSubmission onSubmit={handleSubmitPost} onCancel={() => setShowSubmission(false)} />;
   }
 
   return (
@@ -139,6 +112,17 @@ The blog post would continue with more paragraphs, examples, and detailed analys
             tech trends, and digital life. Casual, reflective, and sometimes controversial.
           </p>
           <div className="w-24 h-1 bg-primary-500 mx-auto mt-6"></div>
+          
+          {/* Write New Post Button */}
+          <motion.button
+            onClick={() => setShowSubmission(true)}
+            className="mt-8 flex items-center gap-2 px-6 py-3 bg-primary-500 hover:bg-primary-600 text-white font-semibold rounded-lg transition-all duration-200 transform hover:scale-105"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <FiPlus className="w-5 h-5" />
+            Write New Post
+          </motion.button>
         </motion.div>
 
         {/* Category Filter */}
@@ -149,7 +133,7 @@ The blog post would continue with more paragraphs, examples, and detailed analys
           viewport={{ once: true }}
           className="flex flex-wrap justify-center gap-4 mb-12"
         >
-          {categories.map((category) => (
+          {categoryOptions.map((category) => (
             <button
               key={category.id}
               onClick={() => setSelectedCategory(category.id)}
@@ -165,7 +149,7 @@ The blog post would continue with more paragraphs, examples, and detailed analys
         </motion.div>
 
         {/* Featured Post */}
-        {filteredPosts.filter(post => post.featured).length > 0 && (
+        {filteredPosts.filter(post => post.featured_post).length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -173,7 +157,7 @@ The blog post would continue with more paragraphs, examples, and detailed analys
             viewport={{ once: true }}
             className="mb-12"
           >
-            {filteredPosts.filter(post => post.featured).map((post) => (
+            {filteredPosts.filter(post => post.featured_post).map((post) => (
               <div 
                 key={post.id} 
                 className="bg-gradient-to-r from-primary-500/10 to-primary-600/10 p-8 rounded-2xl border border-primary-500/20 cursor-pointer hover:border-primary-400 transition-all duration-300"
@@ -185,13 +169,15 @@ The blog post would continue with more paragraphs, examples, and detailed analys
                 </div>
                 
                 {/* Featured Post Image */}
-                <div className="mb-6">
-                  <img 
-                    src={post.image} 
-                    alt={post.title}
-                    className="w-full h-48 object-cover rounded-lg"
-                  />
-                </div>
+                {post.featured_image && (
+                  <div className="mb-6">
+                    <img 
+                      src={getPostImageUrl(post) || ''} 
+                      alt={post.title}
+                      className="w-full h-48 object-cover rounded-lg"
+                    />
+                  </div>
+                )}
                 
                 <h3 className="text-3xl font-bold text-white mb-4">{post.title}</h3>
                 <p className="text-gray-300 text-lg mb-6 leading-relaxed">{post.excerpt}</p>
@@ -199,11 +185,11 @@ The blog post would continue with more paragraphs, examples, and detailed analys
                   <div className="flex items-center gap-6 text-sm text-gray-400">
                     <div className="flex items-center gap-2">
                       <FiCalendar className="w-4 h-4" />
-                      {new Date(post.date).toLocaleDateString()}
+                      {new Date(post.created).toLocaleDateString()}
                     </div>
                     <div className="flex items-center gap-2">
                       <FiClock className="w-4 h-4" />
-                      {post.readTime}
+                      {post.read_time} min read
                     </div>
                   </div>
                   <button className="flex items-center gap-2 text-primary-400 hover:text-primary-300 transition-colors duration-200">
@@ -217,7 +203,7 @@ The blog post would continue with more paragraphs, examples, and detailed analys
 
         {/* Blog Posts Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredPosts.filter(post => !post.featured).map((post, index) => (
+          {filteredPosts.filter(post => !post.featured_post).map((post, index) => (
             <motion.div
               key={post.id}
               initial={{ opacity: 0, y: 20 }}
@@ -231,13 +217,15 @@ The blog post would continue with more paragraphs, examples, and detailed analys
                 onClick={() => handlePostClick(post.slug)}
               >
                 {/* Blog Post Image */}
-                <div className="mb-4">
-                  <img 
-                    src={post.image} 
-                    alt={post.title}
-                    className="w-full h-32 object-cover rounded-lg"
-                  />
-                </div>
+                {post.featured_image && (
+                  <div className="mb-4">
+                    <img 
+                      src={getPostImageUrl(post) || ''} 
+                      alt={post.title}
+                      className="w-full h-32 object-cover rounded-lg"
+                    />
+                  </div>
+                )}
                 
                 <div className="flex items-center gap-4 mb-4">
                   <span className="px-3 py-1 bg-dark-600 text-gray-300 text-xs rounded-full">
@@ -245,7 +233,7 @@ The blog post would continue with more paragraphs, examples, and detailed analys
                   </span>
                   <div className="flex items-center gap-2 text-sm text-gray-400">
                     <FiCalendar className="w-4 h-4" />
-                    {new Date(post.date).toLocaleDateString()}
+                    {new Date(post.created).toLocaleDateString()}
                   </div>
                 </div>
                 
@@ -260,7 +248,7 @@ The blog post would continue with more paragraphs, examples, and detailed analys
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-sm text-gray-400">
                     <FiClock className="w-4 h-4" />
-                    {post.readTime}
+                    {post.read_time} min read
                   </div>
                   <button className="flex items-center gap-2 text-primary-400 hover:text-primary-300 transition-colors duration-200">
                     Read <FiArrowRight className="w-4 h-4" />

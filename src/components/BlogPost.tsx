@@ -1,20 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FiArrowLeft, FiCalendar, FiClock, FiTag } from 'react-icons/fi';
+import { Post } from '../config/pocketbase';
 
 interface BlogPostProps {
-  post: {
-    id: number;
-    title: string;
-    content: string;
-    excerpt: string;
-    category: string;
-    date: string;
-    readTime: string;
-    tags: string[];
-    image: string;
-    slug: string;
-  };
+  post: Post;
   onBack: () => void;
 }
 
@@ -46,11 +36,13 @@ const BlogPost: React.FC<BlogPostProps> = ({ post, onBack }) => {
             transition={{ duration: 0.8 }}
             className="mb-8"
           >
-            <img
-              src={post.image}
-              alt={post.title}
-              className="w-full h-64 md:h-96 object-cover rounded-2xl"
-            />
+            {post.featured_image && (
+              <img
+                src={`http://127.0.0.1:8090/api/files/posts/${post.id}/${post.featured_image}`}
+                alt={post.title}
+                className="w-full h-64 md:h-96 object-cover rounded-2xl"
+              />
+            )}
           </motion.div>
 
           {/* Article Header */}
@@ -66,11 +58,11 @@ const BlogPost: React.FC<BlogPostProps> = ({ post, onBack }) => {
               </span>
               <div className="flex items-center gap-2 text-sm text-gray-400">
                 <FiCalendar className="w-4 h-4" />
-                {new Date(post.date).toLocaleDateString()}
+                {new Date(post.created).toLocaleDateString()}
               </div>
               <div className="flex items-center gap-2 text-sm text-gray-400">
                 <FiClock className="w-4 h-4" />
-                {post.readTime}
+                {post.read_time} min read
               </div>
             </div>
 
@@ -84,13 +76,13 @@ const BlogPost: React.FC<BlogPostProps> = ({ post, onBack }) => {
 
             {/* Tags */}
             <div className="flex flex-wrap gap-2">
-              {post.tags.map((tag) => (
+              {post.tags && post.tags.split(',').map((tag) => (
                 <span
                   key={tag}
                   className="px-3 py-1 bg-dark-700 text-gray-300 text-sm rounded-full flex items-center gap-2"
                 >
                   <FiTag className="w-3 h-3" />
-                  {tag}
+                  {tag.trim()}
                 </span>
               ))}
             </div>

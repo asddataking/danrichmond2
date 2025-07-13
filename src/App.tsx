@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FiSun, FiMoon, FiMenu, FiX } from 'react-icons/fi';
+import { FiSun, FiMoon, FiMenu, FiX, FiSettings } from 'react-icons/fi';
 import Hero from './components/Hero';
 import About from './components/About';
-
 import Projects from './components/Projects';
 import Blog from './components/Blog';
 import VideoHub from './components/VideoHub';
 import Footer from './components/Footer';
+import { AdminAuthProvider } from './contexts/AdminAuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   const [darkMode, setDarkMode] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showAdmin, setShowAdmin] = useState(false);
 
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
@@ -56,6 +58,15 @@ function App() {
                     {item}
                   </button>
                 ))}
+                
+                {/* Admin Button */}
+                <button
+                  onClick={() => setShowAdmin(true)}
+                  className="flex items-center gap-2 px-3 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-lg transition-colors duration-200 text-sm"
+                >
+                  <FiSettings className="w-4 h-4" />
+                  Admin
+                </button>
                 
                 {/* Dark Mode Toggle */}
                 <button
@@ -118,6 +129,24 @@ function App() {
 
         <Footer />
       </div>
+
+      {/* Admin Panel */}
+      {showAdmin && (
+        <div className="fixed inset-0 z-50">
+          <AdminAuthProvider>
+            <ProtectedRoute>
+              <div className="relative">
+                <button
+                  onClick={() => setShowAdmin(false)}
+                  className="absolute top-4 right-4 z-10 p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors duration-200"
+                >
+                  <FiX className="w-5 h-5" />
+                </button>
+              </div>
+            </ProtectedRoute>
+          </AdminAuthProvider>
+        </div>
+      )}
     </div>
   );
 }
