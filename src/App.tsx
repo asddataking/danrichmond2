@@ -45,7 +45,7 @@ function App() {
 
   return (
     <div className={`min-h-screen ${darkMode ? 'dark' : ''}`}>
-      <div className="bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white min-h-screen">
+      <div className="bg-gradient-to-br from-purple-900 via-purple-800 to-purple-950 text-white min-h-screen">
         {/* Dark Mode Toggle */}
         <motion.div 
           className="fixed top-4 right-4 z-50"
@@ -135,7 +135,7 @@ function App() {
                 href={link.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`block w-full p-4 rounded-xl ${link.color} text-white font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-xl flex items-center justify-between backdrop-blur-sm`}
+                className={`block w-full max-w-sm mx-auto p-4 rounded-xl ${link.color} text-white font-medium transition-all duration-300 transform hover:scale-105 hover:shadow-xl flex items-center justify-center gap-3 backdrop-blur-sm text-center`}
                 whileHover={{ 
                   scale: 1.02,
                   y: -2
@@ -150,21 +150,13 @@ function App() {
                   stiffness: 100
                 }}
               >
-                <div className="flex items-center gap-3">
-                  <motion.div
-                    whileHover={{ rotate: 360 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <link.icon className="w-5 h-5" />
-                  </motion.div>
-                  <span>{link.name}</span>
-                </div>
                 <motion.div
-                  whileHover={{ x: 3 }}
-                  transition={{ duration: 0.2 }}
+                  whileHover={{ rotate: 360 }}
+                  transition={{ duration: 0.3 }}
                 >
-                  <FiExternalLink className="w-4 h-4" />
+                  <link.icon className="w-5 h-5" />
                 </motion.div>
+                <span className="font-medium">{link.name}</span>
               </motion.a>
             ))}
           </motion.div>
@@ -202,7 +194,7 @@ function App() {
         {/* Background Animation */}
         <div className="fixed inset-0 -z-10 overflow-hidden">
           <motion.div
-            className="absolute top-20 left-20 w-72 h-72 bg-purple-500/10 rounded-full blur-3xl"
+            className="absolute top-20 left-20 w-72 h-72 bg-purple-600/15 rounded-full blur-3xl"
             animate={{
               scale: [1, 1.2, 1],
               rotate: [0, 180, 360],
@@ -216,7 +208,7 @@ function App() {
             }}
           />
           <motion.div
-            className="absolute bottom-20 right-20 w-96 h-96 bg-pink-500/10 rounded-full blur-3xl"
+            className="absolute bottom-20 right-20 w-96 h-96 bg-purple-800/15 rounded-full blur-3xl"
             animate={{
               scale: [1.2, 1, 1.2],
               rotate: [360, 180, 0],
