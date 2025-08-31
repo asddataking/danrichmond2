@@ -9,7 +9,7 @@ export const YOUTUBE_CONFIG = {
   API_KEY: 'YOUR_YOUTUBE_API_KEY', // Replace with your actual API key
   
   // Number of videos to fetch
-  MAX_RESULTS: 6,
+  MAX_RESULTS: 1, // Only fetch latest video for linktree style
   
   // Channel URL for subscribe button
   CHANNEL_URL: 'https://youtube.com/@danrichmond'
@@ -22,5 +22,11 @@ export const YOUTUBE_CONFIG = {
 // 4. Create credentials (API Key)
 // 5. Get your Channel ID from your YouTube channel URL
 // 6. Replace the values above with your actual credentials
+
+// To find your Channel ID:
+// 1. Go to your YouTube channel
+// 2. Right-click and "View Page Source"
+// 3. Search for "channelId" - you'll find something like "UCxxxxxxxxxx"
+// 4. Copy that ID and replace UCYOUR_CHANNEL_ID above
 
 export default YOUTUBE_CONFIG; 
