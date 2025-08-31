@@ -30,6 +30,12 @@ function App() {
       color: "bg-orange-600 hover:bg-orange-700"
     },
     {
+      name: "Weed + Food Reviews",
+      url: "https://www.dankndevour.com",
+      icon: FiExternalLink,
+      color: "bg-green-600 hover:bg-green-700"
+    },
+    {
       name: "GitHub",
       url: "https://github.com/danrichmond2",
       icon: FiGithub,
@@ -51,7 +57,7 @@ function App() {
       name: "Email",
       url: "mailto:dan@danrichmond.com",
       icon: FiMail,
-      color: "bg-green-600 hover:bg-green-700"
+      color: "bg-emerald-600 hover:bg-emerald-700"
     }
   ];
 
