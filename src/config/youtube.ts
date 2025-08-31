@@ -3,10 +3,10 @@
 
 export const YOUTUBE_CONFIG = {
   // Your YouTube Channel ID (found in your channel URL)
-  CHANNEL_ID: 'UCYOUR_CHANNEL_ID', // Replace with your actual channel ID
+  CHANNEL_ID: process.env.REACT_APP_YOUTUBE_CHANNEL_ID || 'UCYOUR_CHANNEL_ID',
   
   // Your YouTube API Key (get from Google Cloud Console)
-  API_KEY: 'YOUR_YOUTUBE_API_KEY', // Replace with your actual API key
+  API_KEY: process.env.REACT_APP_YOUTUBE_API_KEY || 'YOUR_YOUTUBE_API_KEY',
   
   // Number of videos to fetch
   MAX_RESULTS: 1, // Only fetch latest video for linktree style

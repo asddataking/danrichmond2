@@ -45,32 +45,74 @@ const YouTubeIntegration: React.FC<YouTubeIntegrationProps> = ({
       try {
         setLoading(true);
         
-        // For now, using mock data
-        // When you have a real API key, uncomment the code below
-        /*
-        if (!apiKey || apiKey === YOUTUBE_CONFIG.API_KEY) {
-          throw new Error('YouTube API key not configured');
+        console.log('YouTube Integration Debug:', {
+          apiKey: apiKey ? `${apiKey.substring(0, 10)}...` : 'undefined',
+          channelId: channelId || 'undefined',
+          hasValidApiKey: apiKey && apiKey !== 'YOUR_YOUTUBE_API_KEY',
+          hasValidChannelId: channelId && channelId !== 'UCYOUR_CHANNEL_ID'
+        });
+        
+        // Check if we have valid API credentials
+        if (!apiKey || apiKey === 'YOUR_YOUTUBE_API_KEY' || !channelId || channelId === 'UCYOUR_CHANNEL_ID') {
+          console.log('Using mock data - API credentials not configured');
+          setVideo(mockVideo);
+          setLoading(false);
+          return;
         }
 
-        const response = await fetch(
-          `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&order=date&maxResults=1&key=${apiKey}`
-        );
+        // Fetch latest video from YouTube API
+        const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&order=date&maxResults=1&key=${apiKey}`;
+        
+        console.log('Fetching from YouTube API:', searchUrl);
+        
+        const response = await fetch(searchUrl, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+          },
+        });
 
         if (!response.ok) {
-          throw new Error('Failed to fetch video');
+          const errorText = await response.text();
+          console.error('YouTube API Error Response:', errorText);
+          throw new Error(`Failed to fetch video from YouTube API: ${response.status} ${response.statusText}`);
         }
 
         const data = await response.json();
         
+        console.log('YouTube API Response:', data);
+        
+        if (data.error) {
+          throw new Error(`YouTube API Error: ${data.error.message || 'Unknown error'}`);
+        }
+        
         if (data.items && data.items.length > 0) {
           const item = data.items[0];
           
-          // Get video details
-          const detailsResponse = await fetch(
-            `https://www.googleapis.com/youtube/v3/videos?part=statistics,contentDetails&id=${item.id.videoId}&key=${apiKey}`
-          );
+          // Get video details including statistics and duration
+          const detailsUrl = `https://www.googleapis.com/youtube/v3/videos?part=statistics,contentDetails&id=${item.id.videoId}&key=${apiKey}`;
+          
+          const detailsResponse = await fetch(detailsUrl, {
+            method: 'GET',
+            headers: {
+              'Accept': 'application/json',
+            },
+          });
+          
+          if (!detailsResponse.ok) {
+            const errorText = await detailsResponse.text();
+            console.error('YouTube Details API Error Response:', errorText);
+            throw new Error(`Failed to fetch video details: ${detailsResponse.status} ${detailsResponse.statusText}`);
+          }
           
           const detailsData = await detailsResponse.json();
+          
+          console.log('YouTube Details API Response:', detailsData);
+          
+          if (detailsData.error) {
+            throw new Error(`YouTube Details API Error: ${detailsData.error.message || 'Unknown error'}`);
+          }
+          
           const details = detailsData.items[0];
           
           const videoData = {
@@ -85,13 +127,13 @@ const YouTubeIntegration: React.FC<YouTubeIntegrationProps> = ({
           };
           
           setVideo(videoData);
+        } else {
+          throw new Error('No videos found for this channel');
         }
-        */
         
-        // Using mock data for now
-        setVideo(mockVideo);
         setLoading(false);
       } catch (err) {
+        console.error('YouTube API Error:', err);
         setError(err instanceof Error ? err.message : 'Failed to fetch video');
         setLoading(false);
       }
@@ -106,6 +148,31 @@ const YouTubeIntegration: React.FC<YouTubeIntegrationProps> = ({
       month: 'short',
       day: 'numeric'
     });
+  };
+
+  const formatViewCount = (viewCount: string) => {
+    const count = parseInt(viewCount);
+    if (count >= 1000000) {
+      return `${(count / 1000000).toFixed(1)}M`;
+    } else if (count >= 1000) {
+      return `${(count / 1000).toFixed(1)}K`;
+    }
+    return count.toString();
+  };
+
+  const formatDuration = (duration: string) => {
+    // Parse ISO 8601 duration format (PT4M13S -> 4:13)
+    const match = duration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+    if (!match) return '0:00';
+    
+    const hours = parseInt(match[1] || '0');
+    const minutes = parseInt(match[2] || '0');
+    const seconds = parseInt(match[3] || '0');
+    
+    if (hours > 0) {
+      return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
 
   if (loading) {
