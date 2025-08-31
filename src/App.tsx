@@ -18,6 +18,18 @@ function App() {
       color: "bg-red-600 hover:bg-red-700"
     },
     {
+      name: "Get your AI System",
+      url: "https://www.dantalksai.com",
+      icon: FiExternalLink,
+      color: "bg-purple-600 hover:bg-purple-700"
+    },
+    {
+      name: "Wondershare Filmora",
+      url: "https://filmora.wondershare.com/fission/invite?share_code=22QT9ut95Tn&referral_id=435&lang=en-us",
+      icon: FiExternalLink,
+      color: "bg-orange-600 hover:bg-orange-700"
+    },
+    {
       name: "GitHub",
       url: "https://github.com/danrichmond2",
       icon: FiGithub,
