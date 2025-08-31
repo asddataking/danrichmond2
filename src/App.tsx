@@ -1,156 +1,149 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FiSun, FiMoon, FiMenu, FiX, FiSettings } from 'react-icons/fi';
-import Hero from './components/Hero';
-import About from './components/About';
-import Projects from './components/Projects';
-import Blog from './components/Blog';
-import VideoHub from './components/VideoHub';
-import Footer from './components/Footer';
-import { AdminAuthProvider } from './contexts/AdminAuthContext';
-import ProtectedRoute from './components/ProtectedRoute';
+import { FiSun, FiMoon, FiYoutube, FiGithub, FiLinkedin, FiInstagram, FiMail, FiExternalLink } from 'react-icons/fi';
+import YouTubeIntegration from './components/YouTubeIntegration';
 
 function App() {
   const [darkMode, setDarkMode] = useState(true);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [showAdmin, setShowAdmin] = useState(false);
 
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
   };
 
-  const toggleMobileMenu = () => {
-    setMobileMenuOpen(!mobileMenuOpen);
-  };
-
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+  const links = [
+    {
+      name: "YouTube Channel",
+      url: "https://youtube.com/@danrichmond",
+      icon: FiYoutube,
+      color: "bg-red-600 hover:bg-red-700"
+    },
+    {
+      name: "GitHub",
+      url: "https://github.com/danrichmond2",
+      icon: FiGithub,
+      color: "bg-gray-800 hover:bg-gray-900"
+    },
+    {
+      name: "LinkedIn",
+      url: "https://linkedin.com/in/danrichmond",
+      icon: FiLinkedin,
+      color: "bg-blue-600 hover:bg-blue-700"
+    },
+    {
+      name: "Instagram",
+      url: "https://instagram.com/danrichmond",
+      icon: FiInstagram,
+      color: "bg-pink-600 hover:bg-pink-700"
+    },
+    {
+      name: "Email",
+      url: "mailto:dan@danrichmond.com",
+      icon: FiMail,
+      color: "bg-green-600 hover:bg-green-700"
     }
-    setMobileMenuOpen(false);
-  };
+  ];
 
   return (
     <div className={`min-h-screen ${darkMode ? 'dark' : ''}`}>
-      <div className="bg-dark-900 text-white min-h-screen">
-        {/* Navigation */}
-        <nav className="fixed top-0 w-full bg-dark-800/90 backdrop-blur-sm z-50 border-b border-dark-700">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-16">
-              {/* Logo */}
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="flex items-center"
-              >
-                <span className="text-xl font-bold text-primary-400">Dan Richmond</span>
-              </motion.div>
-
-              {/* Desktop Navigation */}
-              <div className="hidden md:flex items-center space-x-8">
-                {['home', 'about', 'projects', 'blog', 'youtube', 'contact'].map((item) => (
-                  <button
-                    key={item}
-                    onClick={() => scrollToSection(item)}
-                    className="text-gray-300 hover:text-primary-400 transition-colors duration-200 capitalize"
-                  >
-                    {item}
-                  </button>
-                ))}
-                
-                {/* Admin Button */}
-                <button
-                  onClick={() => setShowAdmin(true)}
-                  className="flex items-center gap-2 px-3 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-lg transition-colors duration-200 text-sm"
-                >
-                  <FiSettings className="w-4 h-4" />
-                  Admin
-                </button>
-                
-                {/* Dark Mode Toggle */}
-                <button
-                  onClick={toggleDarkMode}
-                  className="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors duration-200"
-                >
-                  {darkMode ? <FiSun className="w-5 h-5" /> : <FiMoon className="w-5 h-5" />}
-                </button>
-              </div>
-
-              {/* Mobile menu button */}
-              <div className="md:hidden flex items-center space-x-4">
-                <button
-                  onClick={toggleDarkMode}
-                  className="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors duration-200"
-                >
-                  {darkMode ? <FiSun className="w-5 h-5" /> : <FiMoon className="w-5 h-5" />}
-                </button>
-                <button
-                  onClick={toggleMobileMenu}
-                  className="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors duration-200"
-                >
-                  {mobileMenuOpen ? <FiX className="w-5 h-5" /> : <FiMenu className="w-5 h-5" />}
-                </button>
-              </div>
-            </div>
-
-            {/* Mobile Navigation */}
-            {mobileMenuOpen && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                className="md:hidden border-t border-dark-700"
-              >
-                <div className="px-2 pt-2 pb-3 space-y-1">
-                  {['home', 'about', 'projects', 'blog', 'youtube', 'contact'].map((item) => (
-                    <button
-                      key={item}
-                      onClick={() => scrollToSection(item)}
-                      className="block w-full text-left px-3 py-2 text-gray-300 hover:text-primary-400 hover:bg-dark-700 rounded-md transition-colors duration-200 capitalize"
-                    >
-                      {item}
-                    </button>
-                  ))}
-                  {/* Admin Button for Mobile */}
-                  <button
-                    onClick={() => {
-                      setShowAdmin(true);
-                      setMobileMenuOpen(false);
-                    }}
-                    className="block w-full text-left px-3 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-md transition-colors duration-200"
-                  >
-                    <span className="flex items-center gap-2">
-                      <FiSettings className="w-4 h-4" />
-                      Admin
-                    </span>
-                  </button>
-                </div>
-              </motion.div>
-            )}
-          </div>
-        </nav>
+      <div className="bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white min-h-screen">
+        {/* Dark Mode Toggle */}
+        <div className="fixed top-4 right-4 z-50">
+          <button
+            onClick={toggleDarkMode}
+            className="p-3 rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all duration-200"
+          >
+            {darkMode ? <FiSun className="w-5 h-5" /> : <FiMoon className="w-5 h-5" />}
+          </button>
+        </div>
 
         {/* Main Content */}
-        <main className="pt-16">
-          <Hero />
-          <About />
-          <Projects />
-          <Blog />
-          <VideoHub />
-        </main>
+        <div className="max-w-2xl mx-auto px-6 py-12">
+          {/* Profile Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-12"
+          >
+            {/* Profile Image */}
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+              className="mx-auto w-32 h-32 rounded-full mb-6 shadow-2xl overflow-hidden"
+            >
+              <motion.img 
+                src="/profile.svg" 
+                alt="Dan Richmond" 
+                className="w-full h-full object-cover"
+                animate={{ y: [0, -5, 0] }}
+                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+              />
+            </motion.div>
 
-        <Footer />
-      </div>
+            {/* Name and Bio */}
+            <h1 className="text-4xl font-bold mb-4">Dan Richmond</h1>
+            <p className="text-lg text-gray-300 mb-2">
+              Building bold tools and stories at the intersection of AI, video, and tech
+            </p>
+            <p className="text-gray-400">
+              Technologist, creator, and problem-solver
+            </p>
+          </motion.div>
 
-      {/* Admin Panel */}
-      {showAdmin && (
-        <div className="fixed inset-0 z-50">
-          <AdminAuthProvider>
-            <ProtectedRoute onClose={() => setShowAdmin(false)} />
-          </AdminAuthProvider>
+          {/* Links */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.8 }}
+            className="space-y-4 mb-12"
+          >
+            {links.map((link, index) => (
+              <motion.a
+                key={link.name}
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`block w-full p-4 rounded-xl ${link.color} text-white font-semibold transition-all duration-200 transform hover:scale-105 hover:shadow-lg flex items-center justify-between`}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.6 + index * 0.1, duration: 0.5 }}
+              >
+                <div className="flex items-center gap-3">
+                  <link.icon className="w-5 h-5" />
+                  <span>{link.name}</span>
+                </div>
+                <FiExternalLink className="w-4 h-4" />
+              </motion.a>
+            ))}
+          </motion.div>
+
+          {/* YouTube Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8, duration: 0.8 }}
+            className="mb-8"
+          >
+            <h2 className="text-2xl font-bold text-center mb-6">Latest Video</h2>
+            <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6">
+              <YouTubeIntegration />
+            </div>
+          </motion.div>
+
+          {/* Footer */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1, duration: 0.8 }}
+            className="text-center text-gray-400 text-sm"
+          >
+            <p>© 2024 Dan Richmond. All rights reserved.</p>
+          </motion.div>
         </div>
-      )}
+      </div>
     </div>
   );
 }
