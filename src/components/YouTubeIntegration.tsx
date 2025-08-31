@@ -45,16 +45,11 @@ const YouTubeIntegration: React.FC<YouTubeIntegrationProps> = ({
       try {
         setLoading(true);
         
-        console.log('YouTube Integration Debug:', {
-          apiKey: apiKey ? `${apiKey.substring(0, 10)}...` : 'undefined',
-          channelId: channelId || 'undefined',
-          hasValidApiKey: apiKey && apiKey !== 'YOUR_YOUTUBE_API_KEY',
-          hasValidChannelId: channelId && channelId !== 'UCYOUR_CHANNEL_ID'
-        });
+
         
         // Check if we have valid API credentials
         if (!apiKey || apiKey === 'YOUR_YOUTUBE_API_KEY' || !channelId || channelId === 'UCYOUR_CHANNEL_ID') {
-          console.log('Using mock data - API credentials not configured');
+  
           setVideo(mockVideo);
           setLoading(false);
           return;
@@ -63,7 +58,7 @@ const YouTubeIntegration: React.FC<YouTubeIntegrationProps> = ({
         // Fetch latest video from YouTube API
         const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&order=date&maxResults=1&key=${apiKey}`;
         
-        console.log('Fetching from YouTube API:', searchUrl);
+
         
         const response = await fetch(searchUrl, {
           method: 'GET',
@@ -80,7 +75,7 @@ const YouTubeIntegration: React.FC<YouTubeIntegrationProps> = ({
 
         const data = await response.json();
         
-        console.log('YouTube API Response:', data);
+
         
         if (data.error) {
           throw new Error(`YouTube API Error: ${data.error.message || 'Unknown error'}`);
@@ -107,7 +102,7 @@ const YouTubeIntegration: React.FC<YouTubeIntegrationProps> = ({
           
           const detailsData = await detailsResponse.json();
           
-          console.log('YouTube Details API Response:', detailsData);
+  
           
           if (detailsData.error) {
             throw new Error(`YouTube Details API Error: ${detailsData.error.message || 'Unknown error'}`);
