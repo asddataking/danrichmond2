@@ -80,7 +80,7 @@ function App() {
               className="mx-auto w-28 h-28 sm:w-32 sm:h-32 rounded-full mb-6 shadow-2xl overflow-hidden border-4 border-purple-500/20"
             >
               <motion.img 
-                src="/profile.svg" 
+                src="/profiledan.png" 
                 alt="Dan Richmond" 
                 className="w-full h-full object-cover"
                 animate={{ 
